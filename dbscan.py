@@ -408,6 +408,17 @@ def check_up(box_coord,box_details,check_box):
         flag=True
     return flag
 
+def check_up_right(box_coord,box_details,check_box):
+    flag=False
+    top=box_details[box_coord][2][1] # add correct values
+    bottom=box_details[check_box][2][6] #add correct values
+    a = np.array(top)
+    b = np.array(bottom)
+    dist = numpy.linalg.norm(a - b)
+    if(dist<epsilon and len(box_details[box_coord][0])>min_points):
+        flag=True
+    return flag
+
 
 
 
