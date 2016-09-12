@@ -246,7 +246,7 @@ def clustering(box_details,i):
             open_flag=box_details[i][4]
             hot_flag=box_details[i][6]
             if(open_flag and hot_flag):
-
+                #Checking for top box
                 j=(i[0],i[1]+round(epsilon/math.sqrt(2),2))
                 if(j in  box_details.keys()):
                     flag = check_up(i, box_details, j)
@@ -254,8 +254,18 @@ def clustering(box_details,i):
                         box_details[j][6] = 1  # hot
                         box_details[j][5] = box_details[i][5]
                         clustering(box_details, j)
-                        # if condition for boundary boxes
+                    else:
+                        #checking for j+1
+                        jplus1=(j[0],j[1]+round(epsilon/math.sqrt(2),2))
+                        if(jplus1 in  box_details.keys()):
+                            flag = check_up(j, box_details, jplus1)
+                            if (flag):
+                                box_details[jplus1][6] = 1  # hot
+                                box_details[jplus1][5] = box_details[j][5]
+                                clustering(box_details, jplus1)
 
+
+                #Checking for up right
                 j= (i[0]+round(epsilon/math.sqrt(2),2),i[1]+round(epsilon/math.sqrt(2),2))
                 if(j in box_details.keys()):
                     flag=check_up_right(i, box_details,j)
@@ -263,8 +273,18 @@ def clustering(box_details,i):
                         box_details[j][6]=1
                         box_details[j][5]= box_details[i][5]
                         clustering(box_details,j)
+                    else:
+                        #checking for j+1
+                        jplus1= (j[0]+round(epsilon/math.sqrt(2),2),j[1]+round(epsilon/math.sqrt(2),2))
+                        if(jplus1 in box_details.keys()):
+                            flag=check_up_right(j, box_details,jplus1)
+                            if(flag):
+                                box_details[jplus1][6]=1
+                                box_details[jplus1][5]= box_details[j][5]
+                                clustering(box_details,jplus1)
 
 
+                #Checking for right
                 j= (i[0]+round(epsilon/math.sqrt(2),2),i[1])
                 if(j in box_details.keys()):
                     check_right(i, box_details,j)
@@ -272,8 +292,17 @@ def clustering(box_details,i):
                         box_details[j][6] = 1
                         box_details[j][5] = box_details[i][5]
                         clustering(box_details, j)
+                    else:
+                        jplus1= (j[0]+round(epsilon/math.sqrt(2),2),j[1])
+                        if(jplus1 in box_details.keys()):
+                            check_right(j, box_details,jplus1)
+                            if (flag):
+                                box_details[jplus1][6] = 1
+                                box_details[jplus1][5] = box_details[j][5]
+                                clustering(box_details, jplus1)
 
 
+                #Checking for down right
                 j= (i[0]+round(epsilon/math.sqrt(2),2),i[1]-round(epsilon/math.sqrt(2),2))
                 if (j in box_details.keys()):
                     check_down_right(i, box_details,j)
@@ -281,7 +310,17 @@ def clustering(box_details,i):
                         box_details[j][6] = 1
                         box_details[j][5] = box_details[i][5]
                         clustering(box_details, j)
+                    else:
+                        #check for j+1
+                        jplus1= (j[0]+round(epsilon/math.sqrt(2),2),j[1]-round(epsilon/math.sqrt(2),2))
+                        if (jplus1 in box_details.keys()):
+                            check_down_right(j, box_details,jplus1)
+                            if (flag):
+                                box_details[jplus1][6] = 1
+                                box_details[jplus1][5] = box_details[j][5]
+                                clustering(box_details, jplus1)
 
+                #Checking for down
                 j= (i[0],i[1]-round(epsilon/math.sqrt(2),2))
                 if (j in box_details.keys()):
                     check_down(i, box_details,j)
@@ -289,9 +328,19 @@ def clustering(box_details,i):
                         box_details[j][6] = 1
                         box_details[j][5] = box_details[i][5]
                         clustering(box_details, j)
+                    else:
+                        #check for j+1
+                        jplus1= (j[0],j[1]-round(epsilon/math.sqrt(2),2))
+                        if (jplus1 in box_details.keys()):
+                            check_down(j, box_details,jplus1)
+                            if (flag):
+                                box_details[jplus1][6] = 1
+                                box_details[jplus1][5] = box_details[j][5]
+                                clustering(box_details, jplus1)
 
 
 
+                #Checking for down left
                 j= (i[0]-round(epsilon/math.sqrt(2),2),i[1]-round(epsilon/math.sqrt(2),2))
                 if (j in box_details.keys()):
                     check_down_left(i,box_details,j)
@@ -299,7 +348,18 @@ def clustering(box_details,i):
                         box_details[j][6] = 1
                         box_details[j][5] = box_details[i][5]
                         clustering(box_details, j)
+                    else:
+                        #check for j+1
+                        jplus1= (i[0]-round(epsilon/math.sqrt(2),2),i[1]-round(epsilon/math.sqrt(2),2))
+                        if (jplus1 in box_details.keys()):
+                            check_down_left(j,box_details,jplus1)
+                            if (flag):
+                                box_details[jplus1][6] = 1
+                                box_details[jplus1][5] = box_details[j][5]
+                                clustering(box_details, jplus1)
 
+
+                #Checking for left        
                 j= (i[0]-round(epsilon/math.sqrt(2),2),i[1])
                 if (j in box_details.keys()):
                     check_left(i, box_details,j)
@@ -307,18 +367,36 @@ def clustering(box_details,i):
                         box_details[j][6] = 1
                         box_details[j][5] = box_details[i][5]
                         clustering(box_details, j)
+                    else:
+                        #check for j+1 box
+                        jplus1= (j[0]-round(epsilon/math.sqrt(2),2),j[1])
+                        if (jplus1 in box_details.keys()):
+                            check_left(j, box_details,jplus1)
+                            if (flag):
+                                box_details[jplus1][6] = 1
+                                box_details[jplus1][5] = box_details[j][5]
+                                clustering(box_details, jplus1)
 
-
+                #checking for up left
                 j= (i[0]-round(epsilon/math.sqrt(2),2),i[1]+round(epsilon/math.sqrt(2),2))
                 if (j in box_details.keys()):
-                    check_top_left(i, box_details,j)
+                    check_up_left(i, box_details,j)
                     if (flag):
                         box_details[j][6] = 1
                         box_details[j][5] = box_details[i][5]
                         clustering(box_details, j)
+                    else:
+                        #check for j+1
+                        jplus1= (j[0]-round(epsilon/math.sqrt(2),2),j[1]+round(epsilon/math.sqrt(2),2))
+                        if (jplus1 in box_details.keys()):
+                            check_up_left(j, box_details,jplus1)
+                            if (flag):
+                                box_details[jplus1][6] = 1
+                                box_details[jplus1][5] = box_details[j][5]
+                                clustering(box_details, jplus1)
 
-            else:
-                pass
+
+            
 def check_up(box_coord,box_details,check_box):
     flag=False
     top=box_details[box_coord][2][1]
