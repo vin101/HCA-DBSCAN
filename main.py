@@ -12,7 +12,7 @@ import math
 # import sys
 # import decimal
 # import scipy.spatial as spatial
-# import collections
+from collections import Counter
 import itertools
 
 epsilon = 1.8
@@ -278,10 +278,19 @@ def dbscan():
     # print i,box_details[i][0]
     # 0=cold
     count = 1
+    hot=1
     for i in box_details.keys():
+        box_details[i][6]=hot
         clustering(box_details, i)
         box_details[i][5] = count
         count = count + 1
+    print box_details
+    cluster_list=[]
+    for i in box_details.keys():
+        temp=box_details[i][5]
+        cluster_list.append(temp)
+    print Counter(cluster_list)
+
 
 
 def clustering(box_details, i):
@@ -327,7 +336,7 @@ def clustering(box_details, i):
         # Checking for right
         j = (i[0] + round(epsilon / math.sqrt(2), 2), i[1])
         if (j in box_details.keys()):
-            check_right(i, box_details, j)
+            flag=check_right(i, box_details, j)
             if (flag):
                 box_details[j][6] = 1
                 box_details[j][5] = box_details[i][5]
@@ -335,7 +344,7 @@ def clustering(box_details, i):
             else:
                 jplus1 = (j[0] + round(epsilon / math.sqrt(2), 2), j[1])
                 if (jplus1 in box_details.keys()):
-                    check_right(j, box_details, jplus1)
+                    flag=check_right(j, box_details, jplus1)
                     if (flag):
                         box_details[jplus1][6] = 1
                         box_details[jplus1][5] = box_details[j][5]
@@ -344,7 +353,7 @@ def clustering(box_details, i):
         # Checking for down right
         j = (i[0] + round(epsilon / math.sqrt(2), 2), i[1] - round(epsilon / math.sqrt(2), 2))
         if (j in box_details.keys()):
-            check_down_right(i, box_details, j)
+            flag=check_down_right(i, box_details, j)
             if (flag):
                 box_details[j][6] = 1
                 box_details[j][5] = box_details[i][5]
@@ -353,7 +362,7 @@ def clustering(box_details, i):
                 # check for j+1
                 jplus1 = (j[0] + round(epsilon / math.sqrt(2), 2), j[1] - round(epsilon / math.sqrt(2), 2))
                 if (jplus1 in box_details.keys()):
-                    check_down_right(j, box_details, jplus1)
+                    flag=check_down_right(j, box_details, jplus1)
                     if (flag):
                         box_details[jplus1][6] = 1
                         box_details[jplus1][5] = box_details[j][5]
@@ -362,7 +371,7 @@ def clustering(box_details, i):
         # Checking for down
         j = (i[0], i[1] - round(epsilon / math.sqrt(2), 2))
         if (j in box_details.keys()):
-            check_down(i, box_details, j)
+            flag=check_down(i, box_details, j)
             if (flag):
                 box_details[j][6] = 1
                 box_details[j][5] = box_details[i][5]
@@ -371,7 +380,7 @@ def clustering(box_details, i):
                 # check for j+1
                 jplus1 = (j[0], j[1] - round(epsilon / math.sqrt(2), 2))
                 if (jplus1 in box_details.keys()):
-                    check_down(j, box_details, jplus1)
+                    flag=check_down(j, box_details, jplus1)
                     if (flag):
                         box_details[jplus1][6] = 1
                         box_details[jplus1][5] = box_details[j][5]
@@ -380,7 +389,7 @@ def clustering(box_details, i):
         # Checking for down left
         j = (i[0] - round(epsilon / math.sqrt(2), 2), i[1] - round(epsilon / math.sqrt(2), 2))
         if (j in box_details.keys()):
-            check_down_left(i, box_details, j)
+            flag=check_down_left(i, box_details, j)
             if (flag):
                 box_details[j][6] = 1
                 box_details[j][5] = box_details[i][5]
@@ -389,7 +398,7 @@ def clustering(box_details, i):
                 # check for j+1
                 jplus1 = (i[0] - round(epsilon / math.sqrt(2), 2), i[1] - round(epsilon / math.sqrt(2), 2))
                 if (jplus1 in box_details.keys()):
-                    check_down_left(j, box_details, jplus1)
+                    flag=check_down_left(j, box_details, jplus1)
                     if (flag):
                         box_details[jplus1][6] = 1
                         box_details[jplus1][5] = box_details[j][5]
@@ -398,7 +407,7 @@ def clustering(box_details, i):
         # Checking for left
         j = (i[0] - round(epsilon / math.sqrt(2), 2), i[1])
         if (j in box_details.keys()):
-            check_left(i, box_details, j)
+            flag=check_left(i, box_details, j)
             if (flag):
                 box_details[j][6] = 1
                 box_details[j][5] = box_details[i][5]
@@ -407,7 +416,7 @@ def clustering(box_details, i):
                 # check for j+1 box
                 jplus1 = (j[0] - round(epsilon / math.sqrt(2), 2), j[1])
                 if (jplus1 in box_details.keys()):
-                    check_left(j, box_details, jplus1)
+                    flag=check_left(j, box_details, jplus1)
                     if (flag):
                         box_details[jplus1][6] = 1
                         box_details[jplus1][5] = box_details[j][5]
@@ -416,7 +425,7 @@ def clustering(box_details, i):
         # checking for up left
         j = (i[0] - round(epsilon / math.sqrt(2), 2), i[1] + round(epsilon / math.sqrt(2), 2))
         if (j in box_details.keys()):
-            check_up_left(i, box_details, j)
+            flag=check_up_left(i, box_details, j)
             if (flag):
                 box_details[j][6] = 1
                 box_details[j][5] = box_details[i][5]
@@ -425,7 +434,7 @@ def clustering(box_details, i):
                 # check for j+1
                 jplus1 = (j[0] - round(epsilon / math.sqrt(2), 2), j[1] + round(epsilon / math.sqrt(2), 2))
                 if (jplus1 in box_details.keys()):
-                    check_up_left(j, box_details, jplus1)
+                    flag=check_up_left(j, box_details, jplus1)
                     if (flag):
                         box_details[jplus1][6] = 1
                         box_details[jplus1][5] = box_details[j][5]
@@ -439,6 +448,7 @@ def check_up(box_coord, box_details, check_box):
     a = np.array(top)
     b = np.array(bottom)
     dist = np.linalg.norm(a - b)
+    print dist
     if (dist < epsilon and len(box_details[box_coord][0]) > min_points):
         flag = True
     return flag
@@ -451,6 +461,7 @@ def check_up_right(box_coord, box_details, check_box):
     a = np.array(top_right)
     b = np.array(bottom_left)
     dist = np.linalg.norm(a - b)
+    print dist
     if (dist < epsilon and len(box_details[box_coord][0]) > min_points):
         flag = True
     return flag
@@ -462,6 +473,7 @@ def check_right(box_coord, box_details, check_box):
     a = np.array(right)
     b = np.array(left)
     dist = np.linalg.norm(a - b)
+    print dist
     if (dist < epsilon and len(box_details[box_coord][0]) > min_points):
         flag = True
     return flag
@@ -473,6 +485,7 @@ def check_down_right(box_coord, box_details, check_box):
     a = np.array(bottom_right)
     b = np.array(top_left)
     dist = np.linalg.norm(a - b)
+    print dist
     if (dist < epsilon and len(box_details[box_coord][0]) > min_points):
         flag = True
     return flag
@@ -484,6 +497,7 @@ def check_down(box_coord, box_details, check_box):
     a = np.array(bottom)
     b = np.array(top)
     dist = np.linalg.norm(a - b)
+    print dist
     if (dist < epsilon and len(box_details[box_coord][0]) > min_points):
         flag = True
     return flag
@@ -495,6 +509,7 @@ def check_down_left(box_coord, box_details, check_box):
     a = np.array(top_right)
     b = np.array(bottom_left)
     dist = np.linalg.norm(a - b)
+    print dist
     if (dist < epsilon and len(box_details[box_coord][0]) > min_points):
         flag = True
     return flag
@@ -506,6 +521,7 @@ def check_left(box_coord, box_details, check_box):
     a = np.array(left)
     b = np.array(right)
     dist = np.linalg.norm(a - b)
+    print dist
     if (dist < epsilon and len(box_details[box_coord][0]) > min_points):
         flag = True
     return flag
@@ -517,6 +533,7 @@ def check_up_left(box_coord, box_details, check_box):
     a = np.array(top_left)
     b = np.array(bottom_right)
     dist = np.linalg.norm(a - b)
+    print dist
     if (dist < epsilon and len(box_details[box_coord][0]) > min_points):
         flag = True
     return flag
