@@ -14,16 +14,17 @@ import math
 # import scipy.spatial as spatial
 from collections import Counter
 import itertools
-
-epsilon = 1.8
-min_points = 4.0  # float(sys.argv[3])
+import sys
+sys.setrecursionlimit(50000)
+epsilon = 2.82
+min_points = 10.0  # float(sys.argv[3])
 
 
 # points,neighbours,merging distance,position,flag,cluster_id,hot_cold
 def dbscan():
     # Take input from file (Copy Paste from dbscan code) and sort acc. to x and  y axis
     # open the dataset
-    file_name = "spherical_6_2_modified.csv"
+    file_name = "vinu_dataset.csv"
     i = open(file_name)
     lines = i.read().strip().split('\n')
     i.close()
@@ -59,14 +60,14 @@ def dbscan():
     start_box_coord.append(round(max(coord[0]), 2))  # right most point in dataset(1)
     start_box_coord.append(round(max(coord[1]), 2))  # top most point in dataset(2)
     start_box_coord.append(round(min(coord[1]), 2))  # bottom most point in dataset(3)
-    # print start_box_coord
+    print start_box_coord
     len_x = round(abs(start_box_coord[1] - start_box_coord[0]), 2)  # total length of x-axis
     len_y = round(abs(start_box_coord[2] - start_box_coord[3]), 2)  # total length of y-axis
     number_box_x = int(math.ceil(len_x / round((epsilon / math.sqrt(2)), 2)))  # epsilon/rt(2)=1.27
     number_box_y = int(math.ceil(len_y / round((epsilon / math.sqrt(2)), 2)))
     len_x = number_box_x * round(epsilon / math.sqrt(2), 2)
     len_y = number_box_y * round(epsilon / math.sqrt(2), 2)
-    # print len_x,len_y
+    print len_x,len_y
     '''fig = plt.figure()
     ax = fig.add_subplot(111, projection='3d')
     ax.scatter(coord[0], coord[1], cmap=plt.hot())
@@ -277,7 +278,8 @@ def dbscan():
     # for i in box_details.keys():
     # print i,box_details[i][0]
     # 0=cold
-    count = 1
+    #cluster_id=count
+    '''count = 1
     hot=1
     for i in box_details.keys():
         box_details[i][6]=hot
@@ -439,15 +441,13 @@ def clustering(box_details, i):
                         box_details[jplus1][6] = 1
                         box_details[jplus1][5] = box_details[j][5]
                         clustering(box_details, jplus1)
-
+'''
 
 def check_up(box_coord, box_details, check_box):
     flag = False
     top = box_details[box_coord][2][1]
     bottom = box_details[check_box][2][6]
-    a = np.array(top)
-    b = np.array(bottom)
-    dist = np.linalg.norm(a - b)
+    dist = euclidean(top,bottom)
     print dist
     if (dist < epsilon and len(box_details[box_coord][0]) > min_points):
         flag = True
@@ -458,9 +458,7 @@ def check_up_right(box_coord, box_details, check_box):
     flag = False
     top_right = box_details[box_coord][2][2]  # add correct values
     bottom_left = box_details[check_box][2][5]  # add correct values
-    a = np.array(top_right)
-    b = np.array(bottom_left)
-    dist = np.linalg.norm(a - b)
+    dist = euclidean(top_right,bottom_left)
     print dist
     if (dist < epsilon and len(box_details[box_coord][0]) > min_points):
         flag = True
@@ -470,9 +468,7 @@ def check_right(box_coord, box_details, check_box):
     flag = False
     right = box_details[box_coord][2][4]  # add correct values
     left = box_details[check_box][2][3]  # add correct values
-    a = np.array(right)
-    b = np.array(left)
-    dist = np.linalg.norm(a - b)
+    dist = euclidean(right,left)
     print dist
     if (dist < epsilon and len(box_details[box_coord][0]) > min_points):
         flag = True
@@ -482,9 +478,7 @@ def check_down_right(box_coord, box_details, check_box):
     flag = False
     bottom_right = box_details[box_coord][2][7]  # add correct values
     top_left = box_details[check_box][2][0]  # add correct values
-    a = np.array(bottom_right)
-    b = np.array(top_left)
-    dist = np.linalg.norm(a - b)
+    dist=euclidean(bottom_right,top_left)
     print dist
     if (dist < epsilon and len(box_details[box_coord][0]) > min_points):
         flag = True
@@ -494,9 +488,7 @@ def check_down(box_coord, box_details, check_box):
     flag = False
     bottom = box_details[box_coord][2][6]  # add correct values
     top = box_details[check_box][2][1]  # add correct values
-    a = np.array(bottom)
-    b = np.array(top)
-    dist = np.linalg.norm(a - b)
+    dist = euclidean(bottom,top)
     print dist
     if (dist < epsilon and len(box_details[box_coord][0]) > min_points):
         flag = True
@@ -506,9 +498,7 @@ def check_down_left(box_coord, box_details, check_box):
     flag = False
     bottom_left = box_details[box_coord][2][5]  # add correct values
     top_right = box_details[check_box][2][2]  # add correct values
-    a = np.array(top_right)
-    b = np.array(bottom_left)
-    dist = np.linalg.norm(a - b)
+    dist = euclidean(bottom_left,top_right)
     print dist
     if (dist < epsilon and len(box_details[box_coord][0]) > min_points):
         flag = True
@@ -518,9 +508,7 @@ def check_left(box_coord, box_details, check_box):
     flag = False
     left = box_details[box_coord][2][3]  # add correct values
     right = box_details[check_box][2][4]  # add correct values
-    a = np.array(left)
-    b = np.array(right)
-    dist = np.linalg.norm(a - b)
+    dist = euclidean(left,right)
     print dist
     if (dist < epsilon and len(box_details[box_coord][0]) > min_points):
         flag = True
@@ -530,14 +518,22 @@ def check_up_left(box_coord, box_details, check_box):
     flag = False
     top_left = box_details[box_coord][2][0]  # add correct values
     bottom_right = box_details[check_box][2][7]  # add correct values
-    a = np.array(top_left)
-    b = np.array(bottom_right)
-    dist = np.linalg.norm(a - b)
+    dist = euclidean(top_left,bottom_right)
     print dist
     if (dist < epsilon and len(box_details[box_coord][0]) > min_points):
         flag = True
     return flag
 
+
+def euclidean(x, y):
+    sumSq = 0.0
+
+    # add up the squared differences
+    for i in range(len(x)):
+        sumSq += (x[i] - y[i]) ** 2
+
+    # take the square root of the result
+    return sumSq ** 0.5
 # round off
 def re_round(li, _prec=2):
     try:
